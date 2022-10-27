@@ -16,14 +16,9 @@ digit   [0-9]
 %%
 {comment}   ;
 {blank}     ;
-"+" |
-"-" |
-"*" |
-"/" |
-"=" {return OPERATOR;}
+"+"|"-"|"*"|"/"|"=" {return OPERATOR;}
 
-"(" |
-")" {return BRACKET;}
+"("|")" {return BRACKET;}
 
 "," {return COMMA;}
 
@@ -38,7 +33,7 @@ sub {return BUILTIN_FUCTION;}
 
 \"(\\([\nabfnrt\\'"]|ooo|xdd)|[^"\\\n])*\"  {return STRING;}
 
-$ast|$symbol    {return PARSER_DIRECTIVE}
+$ast|$symbol    {return PARSER_DIRECTIVE;}
 
 %%
 int main() {
