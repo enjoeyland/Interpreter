@@ -1,0 +1,34 @@
+# 1) operator
+-5 + -10
+-5 - +10
+-(5+10)
+
+3 + "hello" * 3
+3 + sub("hello",2,2) * 3
+
+# 3) variables
+variables
+compil2r
+exampl2
+
+# 4) numeric expression
+3+3
+3+3.5
+3.5+3.5
+
+# 5) string expression
+"abc"+"abc"
+"abc" * 3
+"abcabcabc" / "abc"
+"abcabc123"/"abc"
+"abc" + 123
+"abc" + .123
+sub("abc123",3,3)
+
+# 5) assignment expression
+hello3 = "hello" * 3
+
+# 7) ( ) expression
+-5*(3+4)
+"abc"+("abc")
+(sub(((("abc123"))),(3),(5)))
