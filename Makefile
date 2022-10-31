@@ -1,6 +1,10 @@
-parser_202020790.out: main.l main.c token_type.h
-	flex --header-file=Lexer.h main.l
-	gcc -o parser_202020790.out main.c token_type.h lex.yy.c -lfl
+TARGET = parser_202020790.out
+
+all: $(TARGET)
+$(TARGET): main.l main.c token_type.h lex.yy.c
+	gcc -lfl -o $@ main.c token_type.h lex.yy.c -I. 
+lex.yy.c: main.l
+	flex main.l
 .PHONY : clean
 clean:
-	rm -rf *.yy.c *.out Lexer.h
+	rm -rf *.yy.c *.out *.yy.h

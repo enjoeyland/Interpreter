@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Lexer.h"
+#include "lex.yy.h"
 #include "token_type.h"
 
 #define ID 0

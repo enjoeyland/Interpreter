@@ -1,6 +1,9 @@
+%option header-file="lex.yy.h"
+
 %{
 #include "token_type.h"
 %}
+
 comment #.*
 blank   [ \t]+
 letter  [a-zA-Z]
