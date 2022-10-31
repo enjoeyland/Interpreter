@@ -1,1 +1,4 @@
 /.vscode
+*.yy.c
+*.out
+Lexer.h

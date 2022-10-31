@@ -10,5 +10,6 @@
 #define BUILTIN_FUCTION 7
 #define COMMA 8
 #define PARSER_DIRECTIVE 9
+#define NEW_LINE 10
 
 #endif
