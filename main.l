@@ -2,18 +2,18 @@
 #include "token_type.h"
 %}
 comment #.*
-blank   [ \t\n]+
+blank   [ \t]+
 letter  [a-zA-Z]
 digit   [0-9]
 %%
 {comment}   ;
 {blank}     ;
-[+_*/=] {return OPERATOR;}
+[+\-*/=] {return OPERATOR;}
 
 [()] {return BRACKET;}
 
 , {return COMMA;}
-
+\n {return NEW_LINE;}
 sub {return BUILTIN_FUCTION;}
 
 {digit}+    {return INTEGER;}
