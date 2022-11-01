@@ -5,6 +5,7 @@
 #include "lex.yy.h"
 #include "token_type.h"
 
+// TODO: re-order number
 #define ID 0
 #define INT 1
 #define REAL 2
@@ -31,7 +32,7 @@ union value {
     double doubleValue;
 };
 struct _Token {
-    int name;
+    int type;
     union value value;
     int valueType;
 } typedef Token;
@@ -189,23 +190,42 @@ Token getNextToken() {
             return failToken;
     }
 }
+
+struct _TokenParser {
+    Token* statement;
+    int len;
+    int current;
+} typedef TokenParser;
+
+int isLookahead(TokenParser tp, int type) {
+    return tp.statement[tp.current].type == type;
+}
+
+void match(TokenParser tp, int type) {
+    if (isLookahead(tp, type)) {
+        tp.current++;
+    }
+}
+// TODO: error 위치를 프린트 하기 위해서는 Token에 추가적인 정보를 같고 있어야 한다.
+void syntax_error() {
+    printf("syntax error\n");
+}
+
 // TODO: recursive-descent parsing
-void Interpret(Token* statement, int len) {
+void interpret(Token* statement, int len) {
     for (int i = 0; i < len; i++) {
-        printf("%d ", statement[i].name);
+        printf("%d ", statement[i].type);
     }
     printf("\n");
 }
 
-// valgrind
 int main() {
     Token statement[100];
     int len = 0;
     Token token;
     while (!isFailToken(token = getNextToken())) {
         if (isNewlineToken(token)) {
-            Interpret(statement, len);
-
+            interpret(statement, len);
             len = 0;
         } else {
             statement[len++] = token;
