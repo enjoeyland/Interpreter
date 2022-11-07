@@ -42,6 +42,12 @@ Token getInterger() {
     return (Token){INT, i, V_INT};
 }
 
+Token getReal() {
+    char* eptr;
+    double d = strtod(yytext, &eptr);
+    return (Token){REAL, .value.doubleValue = d, V_DOUBLE};
+}
+
 int symbolTableIndex = 0;
 char symbolTable[100][11];
 
@@ -141,6 +147,8 @@ Token getNextToken() {
             return getOperator();
         case C_INT:
             return getInterger();
+        case C_REAL:
+            return getReal();
         case C_VARIABLE:
             return getVariable();
         case C_STR:
