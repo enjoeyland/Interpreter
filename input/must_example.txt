@@ -26,7 +26,7 @@ exampl2
 sub("abc123",3,3)
 
 # 5) assignment expression
-hello3 = "hello" * 3 # 그냥 종료
+hello3 = "hello" * 3 # 멈춤
 
 # 7) ( ) expression
 -5*(3+4)

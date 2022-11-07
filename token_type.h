@@ -2,6 +2,7 @@
 #define TOKEN_TYPE_H
 
 typedef enum _TokenClass {
+    C_FAIL,
     C_VARIABLE,
     C_INT,
     C_REAL,
