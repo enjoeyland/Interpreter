@@ -63,6 +63,8 @@ ParseNode* operator_mul_div() {
 }
 
 ParseNode* statement() {
+    if (isLookahead(NEW_LINE)) return NULL;
+
     ParseNode* v = NULL;
     ParseNode* a = NULL;
     if (isLookahead(VARIABLE)) {
@@ -201,6 +203,7 @@ int print_syntax_tree_by_level() {
 }
 
 void print_syntax_tree(ParseNode* pt) {
+    if (pt == NULL) return;
     enqueue(pt);
     enqueue(NULL);
     while (!(isEmpty())) {
