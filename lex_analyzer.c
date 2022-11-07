@@ -30,7 +30,7 @@ Token getNextToken() {
         case C_PARSER_DIRECTIVE:
             return getParserDirective();
         case C_NEW_LINE:
-            return (Token){C_NEW_LINE, 0, NONE};
+            return (Token){NEW_LINE, 0, NONE};
         default:
             printf("else\n");
             return failToken;
