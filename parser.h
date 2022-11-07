@@ -25,8 +25,9 @@ ParseNode* statement();
 ParseNode* expression();
 ParseNode* term();
 ParseNode* factor();
+ParseNode* unsigned_factor();
 ParseNode* num();
 
-void print_parse_tree(ParseNode*);
+void print_syntax_tree(ParseNode*);
 
 #endif  // PARSER_H

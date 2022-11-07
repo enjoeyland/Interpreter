@@ -11,6 +11,7 @@ TokenParser tp;
 // TODO: error 위치를 프린트 하기 위해서는 Token에 추가적인 정보를 갖고 있어야 한다.
 Token* syntax_error(char* msg) {
     printf("syntax error: %s\n", msg);
+    exit(1);
     return getCurrentToken();
 }
 
@@ -132,10 +133,10 @@ ParseNode* factor() {
         return sp;
     } else if (isLookahead(PLUS) || isLookahead(MINUS)) {
         ParseNode* oas = operator_add_sub();
-        ParseNode* n = num();
+        ParseNode* uf = unsigned_factor();
         ////////////////////////
         oas->child_num = 1;
-        oas->first = n;
+        oas->first = uf;
         return oas;
     } else if (isLookahead(INT) || isLookahead(REAL)) {
         return num();
@@ -147,6 +148,20 @@ ParseNode* factor() {
         syntax_error("factor");
     }
 }
+ParseNode* unsigned_factor() {
+    if (isLookahead(BRACKET_LEFT)) {
+        match(BRACKET_LEFT);
+        ParseNode* e = expression();
+        match(BRACKET_RIGHT);
+        ////////////////////////
+        return e;
+    } else if (isLookahead(INT) || isLookahead(REAL)) {
+        return num();
+    } else {
+        syntax_error("unsigned factor");
+    }
+}
+
 ParseNode* num() {
     if (isLookahead(INT)) {
         return match(INT);
@@ -183,7 +198,7 @@ int print_parse_tree_level() {
     }
 }
 
-void print_parse_tree(ParseNode* pt) {
+void print_syntax_tree(ParseNode* pt) {
     enqueue(pt);
     enqueue(NULL);
     while (!(isEmpty())) {

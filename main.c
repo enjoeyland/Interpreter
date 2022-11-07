@@ -168,8 +168,9 @@ void interpret(Token* token_statement, int len) {
     printf("\n");
 
     tp = (TokenParser){token_statement, len, 0};
-    ParseNode* parse_tree = statement();
-    print_parse_tree(parse_tree);
+    ParseNode* syntax_tree = statement();
+    printf("made syntax tree\n");
+    print_syntax_tree(syntax_tree);
 }
 
 int main() {
