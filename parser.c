@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "lex_analyzer.h"
 #include "parsenode_queue.c"
 #include "token_type.h"
 

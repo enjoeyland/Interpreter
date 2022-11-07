@@ -6,6 +6,9 @@
 
 extern TokenParser tp;
 void interpret(Token* token_statement, int len) {
+    printStringTable();
+    printSymbolTable();
+
     for (int i = 0; i < len; i++) {
         printf("%d ", token_statement[i].type);
     }

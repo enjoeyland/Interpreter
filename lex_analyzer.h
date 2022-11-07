@@ -5,6 +5,8 @@
 
 Token getNextToken();
 
+void print_token(Token*);
+
 Token getOperator();
 Token getInterger();
 Token getReal();

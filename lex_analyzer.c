@@ -152,3 +152,50 @@ Token getString() {
     }
     return (Token){STR, index, V_INT};
 }
+
+void print_token(Token* t) {
+    switch (t->type) {
+        case VARIABLE:
+            printf("%s", symbolTable[t->value.intValue - 1]);
+            break;
+        case INT:
+            printf("%d", t->value.intValue);
+            break;
+        case REAL:
+            printf("%f", t->value.doubleValue);
+            break;
+        case STR:
+            printf("%s", stringTable[t->value.intValue - 1]);
+            break;
+        case COMMA:
+            printf(",");
+            break;
+        case NEW_LINE:
+            printf("\\n");
+            break;
+        case BUILTIN_SPLIT:
+            printf("split");
+            break;
+        case PLUS:
+            printf("+");
+            break;
+        case MINUS:
+            printf("-");
+            break;
+        case MULTIPLY:
+            printf("*");
+            break;
+        case DIVIDE:
+            printf("/");
+            break;
+        case ASSIGN:
+            printf("=");
+            break;
+        case BRACKET_LEFT:
+            printf("(");
+            break;
+        case BRACKET_RIGHT:
+            printf(")");
+            break;
+    }
+}
