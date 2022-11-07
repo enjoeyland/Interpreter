@@ -1,13 +1,13 @@
 # 1) operator
 -5 + -10
 -5 - +10
--(5+10)
+-(5+10) # seg
 
 3 + "hello" * 3
 3 + sub("hello",2,2) * 3
 
 # 3) variables
-variables
+variables # var = exp으로 처리되고 있음
 compil2r
 exampl2
 
@@ -23,12 +23,12 @@ exampl2
 "abcabc123"/"abc"
 "abc" + 123
 "abc" + .123
-sub("abc123",3,3)
+sub("abc123",3,3) # seg
 
 # 5) assignment expression
 hello3 = "hello" * 3
 
 # 7) ( ) expression
--5*(3+4)
+-5*(3+4) # seg
 "abc"+("abc")
 (sub(((("abc123"))),(3),(5)))
