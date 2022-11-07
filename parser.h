@@ -18,10 +18,12 @@ struct _ParseNode {
 } typedef ParseNode;
 
 Token* getCurrentToken();
+
 ParseNode* operator_add_sub();
 ParseNode* operator_mul_div();
 
 ParseNode* statement();
+ParseNode* after_variable();
 ParseNode* expression();
 ParseNode* term();
 ParseNode* factor();

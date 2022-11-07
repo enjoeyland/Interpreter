@@ -63,24 +63,39 @@ ParseNode* operator_mul_div() {
 }
 
 ParseNode* statement() {
-    if (isLookahead(NEW_LINE)) return NULL;
-
-    ParseNode* v = NULL;
-    ParseNode* a = NULL;
-    if (isLookahead(VARIABLE)) {
-        v = match(VARIABLE);
-        a = match(ASSIGN);
-    }
-    ParseNode* e = expression();
-    match(NEW_LINE);
-    ////////////////////////
-    if (a == NULL) {
-        return e;
+    if (isLookahead(NEW_LINE)) {
+        return NULL;
+    } else if (isLookahead(VARIABLE)) {
+        ParseNode* v = match(VARIABLE);
+        ParseNode* av = after_variable();
+        ////////////////////////
+        if (av == NULL) {
+            return v;
+        } else {
+            av->first = v;
+            return av;
+        }
     } else {
+        ParseNode* e = expression();
+        match(NEW_LINE);
+        ////////////////////////
+        return e;
+    }
+}
+ParseNode* after_variable() {
+    if (isLookahead(ASSIGN)) {
+        ParseNode* a = match(ASSIGN);
+        ParseNode* e = expression();
+        match(NEW_LINE);
+        ////////////////////////
         a->child_num = 2;
-        a->first = v;
         a->second = e;
         return a;
+    } else if (isLookahead(NEW_LINE)) {
+        match(NEW_LINE);
+        return NULL;
+    } else {
+        syntax_error("after variable");
     }
 }
 ParseNode* expression() {
