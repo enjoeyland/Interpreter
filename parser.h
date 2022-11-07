@@ -11,18 +11,22 @@ struct _TokenParser {
 
 struct _ParseNode {
     Token* current;
-    Token* left;
-    Token* right;
+    int child_num;
+    struct _ParseNode* first;
+    struct _ParseNode* second;
+    struct _ParseNode* third;
 } typedef ParseNode;
 
 Token* getCurrentToken();
-Token* operator_add_sub();
-void operator_mul_div();
+ParseNode* operator_add_sub();
+ParseNode* operator_mul_div();
 
-void statement();
-void expression();
-void term();
-void factor();
-void num();
+ParseNode* statement();
+ParseNode* expression();
+ParseNode* term();
+ParseNode* factor();
+ParseNode* num();
+
+void print_parse_tree(ParseNode*);
 
 #endif  // PARSER_H

@@ -155,13 +155,16 @@ Token getNextToken() {
             return failToken;
     }
 }
-
-// TODO: recursive-descent parsing
-void interpret(Token* statement, int len) {
+extern TokenParser tp;
+void interpret(Token* token_statement, int len) {
     for (int i = 0; i < len; i++) {
-        printf("%d ", statement[i].type);
+        printf("%d ", token_statement[i].type);
     }
     printf("\n");
+
+    tp = (TokenParser){token_statement, len, 0};
+    ParseNode* parse_tree = statement();
+    print_parse_tree(parse_tree);
 }
 
 int main() {
@@ -169,11 +172,10 @@ int main() {
     int len = 0;
     Token token;
     while (!isFailToken(token = getNextToken())) {
+        statement[len++] = token;
         if (isNewlineToken(token)) {
             interpret(statement, len);
             len = 0;
-        } else {
-            statement[len++] = token;
         }
     }
 }

@@ -1,6 +1,7 @@
 #include "parser.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "token_type.h"
 
@@ -19,18 +20,24 @@ int isLookahead(int type) {
 Token* getCurrentToken() {
     return &tp.statement[tp.current];
 }
-Token* match(int type) {
+
+ParseNode* match(int type) {
     if (isLookahead(type)) {
-        Token* ct = getCurrentToken();
+        if (type == COMMA || type == BRACKET_LEFT || type == BRACKET_RIGHT || type == NEW_LINE) {
+            return NULL;
+        }
+        ParseNode* pn = malloc(sizeof(ParseNode));
+        pn->current = getCurrentToken();
+        pn->child_num = 0;
         tp.current++;
-        return ct;
+        return pn;
     } else {
         syntax_error();
     }
 }
 
 // operator
-Token* operator_add_sub() {
+ParseNode* operator_add_sub() {
     if (isLookahead(PLUS)) {
         return match(PLUS);
     } else if (isLookahead(MINUS)) {
@@ -39,68 +46,107 @@ Token* operator_add_sub() {
         syntax_error();
     }
 }
-void operator_mul_div() {
+ParseNode* operator_mul_div() {
     if (isLookahead(MULTIPLY)) {
-        match(MULTIPLY);
+        return match(MULTIPLY);
     } else if (isLookahead(DIVIDE)) {
-        match(DIVIDE);
+        return match(DIVIDE);
     } else {
         syntax_error();
     }
 }
 
-void statement() {
+ParseNode* statement() {
+    ParseNode* v = NULL;
+    ParseNode* a = NULL;
     if (isLookahead(VARIABLE)) {
-        match(VARIABLE);
-        match(ASSIGN);
+        v = match(VARIABLE);
+        a = match(ASSIGN);
     }
-    expression();
+    ParseNode* e = expression();
+    match(NEW_LINE);
+    ////////////////////////
+    if (a == NULL) {
+        return e;
+    } else {
+        a->child_num = 2;
+        a->first = v;
+        a->second = e;
+        return a;
 }
-void expression() {
-    term();
+}
+ParseNode* expression() {
+    ParseNode* e = term();
     while (isLookahead(PLUS) || isLookahead(MINUS)) {
-        operator_add_sub();
-        term();
+        ParseNode* oas = operator_add_sub();
+        ParseNode* t = term();
+        ////////////////////////
+        oas->child_num = 2;
+        oas->first = e;
+        oas->second = t;
+        e = oas;
     }
+    ////////////////////////
+    return e;
 }
-void term() {
-    factor();
+
+ParseNode* term() {
+    ParseNode* t = factor();
     while (isLookahead(MULTIPLY) || isLookahead(DIVIDE)) {
-        operator_mul_div();
-        factor();
+        ParseNode* omd = operator_mul_div();
+        ParseNode* f = factor();
+        ////////////////////////
+        omd->child_num = 2;
+        omd->first = t;
+        omd->second = f;
+        t = omd;
     }
+    ////////////////////////
+    return t;
 }
-void factor() {
+
+ParseNode* factor() {
     if (isLookahead(BRACKET_LEFT)) {
         match(BRACKET_LEFT);
-        expression();
+        ParseNode* e = expression();
         match(BRACKET_RIGHT);
         ////////////////////////
-
+        return e;
     } else if (isLookahead(BUILTIN_SPLIT)) {
-        match(BUILTIN_SPLIT);
+        ParseNode* sp = match(BUILTIN_SPLIT);
         match(BRACKET_LEFT);
-        expression();
+        ParseNode* s = expression();
         match(COMMA);
-        expression();
+        ParseNode* i1 = expression();
         match(COMMA);
-        expression();
+        ParseNode* i2 = expression();
         match(BRACKET_RIGHT);
+        ////////////////////////
+        sp->child_num = 3;
+        sp->first = s;
+        sp->second = i1;
+        sp->third = i2;
+        return sp;
     } else if (isLookahead(PLUS) || isLookahead(MINUS)) {
-        operator_add_sub();
-        num();
+        ParseNode* oas = operator_add_sub();
+        ParseNode* n = num();
+        ////////////////////////
+        oas->child_num = 1;
+        oas->first = n;
+        return oas;
     } else if (isLookahead(STR)) {
-        match(STR);
+        return match(STR);
     } else if (isLookahead(VARIABLE)) {
-        match(VARIABLE);
+        return match(VARIABLE);
     } else {
         syntax_error();
     }
 }
-void num() {
+ParseNode* num() {
     if (isLookahead(INT)) {
-        match(INT);
+        return match(INT);
     } else if (isLookahead(REAL)) {
+        return match(REAL);
         match(REAL);
     }
 }
