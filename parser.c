@@ -8,8 +8,8 @@
 TokenParser tp;
 
 // TODO: error 위치를 프린트 하기 위해서는 Token에 추가적인 정보를 갖고 있어야 한다.
-Token* syntax_error() {
-    printf("syntax error\n");
+Token* syntax_error(char* msg) {
+    printf("syntax error: %s\n", msg);
     return getCurrentToken();
 }
 
@@ -32,7 +32,9 @@ ParseNode* match(int type) {
         tp.current++;
         return pn;
     } else {
-        syntax_error();
+        char msg[100];
+        sprintf(msg, "match %d", type);
+        syntax_error(msg);
     }
 }
 
@@ -43,7 +45,7 @@ ParseNode* operator_add_sub() {
     } else if (isLookahead(MINUS)) {
         return match(MINUS);
     } else {
-        syntax_error();
+        syntax_error("oper + -");
     }
 }
 ParseNode* operator_mul_div() {
@@ -52,7 +54,7 @@ ParseNode* operator_mul_div() {
     } else if (isLookahead(DIVIDE)) {
         return match(DIVIDE);
     } else {
-        syntax_error();
+        syntax_error("oper * /");
     }
 }
 
@@ -139,7 +141,7 @@ ParseNode* factor() {
     } else if (isLookahead(VARIABLE)) {
         return match(VARIABLE);
     } else {
-        syntax_error();
+        syntax_error("factor");
     }
 }
 ParseNode* num() {
