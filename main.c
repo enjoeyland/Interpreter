@@ -3,41 +3,10 @@
 #include <string.h>
 
 #include "lex.yy.h"
+#include "parser.h"
 #include "token_type.h"
 
-// TODO: re-order number
-#define ID 0
-#define INT 1
-#define REAL 2
-#define STR 3
-// operator
-#define PLUS 4
-#define MINUS 5
-#define MULTIPLY 6
-#define DIVIDE 7
-#define ASSIGN 8
-#define COLON 9
-// other
-#define SEMICOLON 10
-#define BRACKET_LEFT 11
-#define BRACKET_RIGHT 12
-#define BUILTIN_SPLIT 13
-
-#define NONE -1
-#define V_INT 0
-#define V_DOUBLE 1
-
-union value {
-    int intValue;
-    double doubleValue;
-};
-struct _Token {
-    int type;
-    union value value;
-    int valueType;
-} typedef Token;
 Token failToken = {-1, -1, NONE};
-
 int isEqual(Token t1, Token t2) {
     return memcmp(&t1, &t2, sizeof(Token)) == 0;
 }
@@ -61,10 +30,6 @@ Token getOperator() {
             return (Token){DIVIDE, 0, NONE};
         case '=':
             return (Token){ASSIGN, 0, NONE};
-        case ':':
-            return (Token){COLON, 0, NONE};
-        case ';':
-            return (Token){SEMICOLON, 0, NONE};
     }
 }
 Token getInterger() {
@@ -105,7 +70,7 @@ Token getVariable() {
         strncpy(symbolTable[symbolTableIndex++], symbol, id_len);
         index = symbolTableIndex;
     }
-    return (Token){ID, index, V_INT};
+    return (Token){VARIABLE, index, V_INT};
 }
 
 int stringTableIndex = 0;
@@ -167,48 +132,28 @@ Token getNextToken() {
         return failToken;
     }
     switch (token) {
-        case OPERATOR:
+        case C_OPERATOR:
             return getOperator();
-        case INTEGER:
+        case C_INT:
             return getInterger();
-        case VARIABLE:
+        case C_VARIABLE:
             return getVariable();
-        case STRING:
+        case C_STR:
             return getString();
-        case BRACKET:
+        case C_BRACKET:
             return getBracket();
-        case COMMA:
+        case C_COMMA:
             return (Token){COMMA, 0, NONE};
-        case BUILTIN_FUCTION:
+        case C_BUILTIN_FUCTION:
             return getBuiltinFunction();
-        case PARSER_DIRECTIVE:
+        case C_PARSER_DIRECTIVE:
             return getParserDirective();
-        case NEW_LINE:
-            return (Token){NEW_LINE, 0, NONE};
+        case C_NEW_LINE:
+            return (Token){C_NEW_LINE, 0, NONE};
         default:
             printf("else\n");
             return failToken;
     }
-}
-
-struct _TokenParser {
-    Token* statement;
-    int len;
-    int current;
-} typedef TokenParser;
-
-int isLookahead(TokenParser tp, int type) {
-    return tp.statement[tp.current].type == type;
-}
-
-void match(TokenParser tp, int type) {
-    if (isLookahead(tp, type)) {
-        tp.current++;
-    }
-}
-// TODO: error 위치를 프린트 하기 위해서는 Token에 추가적인 정보를 같고 있어야 한다.
-void syntax_error() {
-    printf("syntax error\n");
 }
 
 // TODO: recursive-descent parsing

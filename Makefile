@@ -1,8 +1,8 @@
 TARGET = parser_202020790.out
 
 all: $(TARGET)
-$(TARGET): main.l main.c token_type.h lex.yy.c
-	gcc -lfl -o $@ main.c token_type.h lex.yy.c -I. 
+$(TARGET): main.l main.c lex.yy.c parser.c
+	gcc -lfl -o $@ main.c lex.yy.c parser.c -I. 
 lex.yy.c: main.l
 	flex main.l
 .PHONY : clean

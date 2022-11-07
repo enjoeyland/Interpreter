@@ -11,23 +11,23 @@ digit   [0-9]
 %%
 {comment}   ;
 {blank}     ;
-[+\-*/=] {return OPERATOR;}
+[+\-*/=] {return C_OPERATOR;}
 
-[()] {return BRACKET;}
+[()] {return C_BRACKET;}
 
-, {return COMMA;}
-\n {return NEW_LINE;}
-sub {return BUILTIN_FUCTION;}
+, {return C_COMMA;}
+\n {return C_NEW_LINE;}
+sub {return C_BUILTIN_FUCTION;}
 
-{digit}+    {return INTEGER;}
+{digit}+    {return C_INT;}
 
 {digit}+"."{digit}* |
-{digit}*"."{digit}+ {return FLOAT;}
+{digit}*"."{digit}+ {return C_REAL;}
 
-{letter}({letter}|{digit})* {return VARIABLE;}
+{letter}({letter}|{digit})* {return C_VARIABLE;}
 
-\"(\\([\nabfnrt\\'"]|ooo|xdd)|[^"\\\n])*\"  {return STRING;}
+\"(\\([\nabfnrt\\'"]|ooo|xdd)|[^"\\\n])*\"  {return C_STR;}
 
-$ast|$symbol    {return PARSER_DIRECTIVE;}
+$ast|$symbol    {return C_PARSER_DIRECTIVE;}
 
 %%
