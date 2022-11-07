@@ -25,13 +25,15 @@ Token* getCurrentToken() {
 
 ParseNode* match(int type) {
     if (isLookahead(type)) {
+        Token* t = getCurrentToken();
+        tp.current++;
+
         if (type == COMMA || type == BRACKET_LEFT || type == BRACKET_RIGHT || type == NEW_LINE) {
             return NULL;
         }
         ParseNode* pn = malloc(sizeof(ParseNode));
-        pn->current = getCurrentToken();
+        pn->current = t;
         pn->child_num = 0;
-        tp.current++;
         return pn;
     } else {
         char msg[100];
@@ -173,7 +175,7 @@ ParseNode* num() {
 }
 
 extern ParseNode* queue[MAX];
-int print_parse_tree_level() {
+int print_syntax_tree_by_level() {
     ParseNode* node;
     while ((node = dequeue()) != NULL) {
         print_token(node->current);
@@ -202,6 +204,6 @@ void print_syntax_tree(ParseNode* pt) {
     enqueue(pt);
     enqueue(NULL);
     while (!(isEmpty())) {
-        print_parse_tree_level();
+        print_syntax_tree_by_level();
     }
 }

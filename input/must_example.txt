@@ -1,7 +1,7 @@
 # 1) operator
 -5 + -10
 -5 - +10
--(5+10) # seg
+-(5+10)
 
 3 + "hello" * 3
 3 + sub("hello",2,2) * 3
@@ -23,12 +23,12 @@ exampl2
 "abcabc123"/"abc"
 "abc" + 123
 "abc" + .123
-sub("abc123",3,3) # seg
+sub("abc123",3,3)
 
 # 5) assignment expression
-hello3 = "hello" * 3
+hello3 = "hello" * 3 # 그냥 종료
 
 # 7) ( ) expression
--5*(3+4) # seg
+-5*(3+4)
 "abc"+("abc")
 (sub(((("abc123"))),(3),(5)))
