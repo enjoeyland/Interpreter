@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "parsenode_queue.c"
 #include "token_type.h"
 
 TokenParser tp;
@@ -75,7 +76,7 @@ ParseNode* statement() {
         a->first = v;
         a->second = e;
         return a;
-}
+    }
 }
 ParseNode* expression() {
     ParseNode* e = term();
@@ -136,6 +137,8 @@ ParseNode* factor() {
         oas->child_num = 1;
         oas->first = n;
         return oas;
+    } else if (isLookahead(INT) || isLookahead(REAL)) {
+        return num();
     } else if (isLookahead(STR)) {
         return match(STR);
     } else if (isLookahead(VARIABLE)) {
@@ -149,6 +152,41 @@ ParseNode* num() {
         return match(INT);
     } else if (isLookahead(REAL)) {
         return match(REAL);
-        match(REAL);
+    } else {
+        syntax_error("num");
+    }
+}
+
+extern ParseNode* queue[MAX];
+int print_parse_tree_level() {
+    ParseNode* node;
+    while ((node = dequeue()) != NULL) {
+        print_token(node->current);
+        if (node->child_num == 0) {
+            printf(" ");
+            continue;
+        }
+        printf("%d ", node->child_num);
+        if (node->child_num >= 1) {
+            enqueue(node->first);
+        }
+        if (node->child_num >= 2) {
+            enqueue(node->second);
+        }
+        if (node->child_num == 3) {
+            enqueue(node->third);
+        }
+    }
+    printf("\n");
+    if (!isEmpty()) {
+        enqueue(NULL);
+    }
+}
+
+void print_parse_tree(ParseNode* pt) {
+    enqueue(pt);
+    enqueue(NULL);
+    while (!(isEmpty())) {
+        print_parse_tree_level();
     }
 }

@@ -17,6 +17,11 @@ int isNewlineToken(Token t) {
     return isEqual(t, (Token){NEW_LINE, 0, NONE});
 }
 
+// TODO: value 값으로 프린트
+void print_token(Token* t) {
+    printf("%d", t->type);
+}
+
 Token getOperator() {
     char c = yytext[0];
     switch (c) {

@@ -54,4 +54,5 @@ int isEqual(Token t1, Token t2);
 int isFailToken(Token t);
 int isNewlineToken(Token t);
 
+void print_token(Token* t);
 #endif
