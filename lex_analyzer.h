@@ -15,8 +15,14 @@ Token getComma();
 Token getBuiltinFunction();
 Token getParserDirective();
 
+struct _SymbolEntry {
+    char name[11];
+    int type;
+    union Value value;
+} typedef SymbolEntry;
+
 int symbolTableIndex;
-char symbolTable[100][11];
+SymbolEntry symbolTable[100];
 int getSymbolIdex(char*);
 int getSymbolIdex_insert(char*);
 void printSymbolTable();

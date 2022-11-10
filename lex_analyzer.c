@@ -90,7 +90,7 @@ Token getParserDirective() {
 
 int getSymbolIdex(char* symbol) {
     for (int i = 0; i < symbolTableIndex; i++) {
-        if (strcmp(symbol, symbolTable[i]) == 0) {
+        if (strcmp(symbol, symbolTable[i].name) == 0) {
             return i + 1;
         }
     }
@@ -106,7 +106,7 @@ int getSymbolIdex_insert(char* symbol) {
 
     int index = getSymbolIdex(limited_symbol);
     if (index == -1) {
-        strncpy(symbolTable[symbolTableIndex++], limited_symbol, id_len);
+        strncpy(symbolTable[symbolTableIndex++].name, limited_symbol, id_len);
         index = symbolTableIndex;
     }
     return index;
@@ -117,7 +117,7 @@ void printSymbolTable() {
     printf("index|\tsymbol\n");
     printf("----------------\n");
     for (int i = 0; i < symbolTableIndex; i++) {
-        printf("%3d  |\t%s\n", i + 1, symbolTable[i]);
+        printf("%3d  |\t%s\n", i + 1, symbolTable[i].name);
     }
 }
 
@@ -157,15 +157,16 @@ Token getString() {
 }
 
 void print_token(Token* t) {
+    if (t == NULL) return;
     switch (t->type) {
         case VARIABLE:
-            printf("%s", symbolTable[t->value.intValue - 1]);
+            printf("%s", symbolTable[t->value.intValue - 1].name);
             break;
         case INT:
             printf("%d", t->value.intValue);
             break;
         case REAL:
-            printf("%f", t->value.doubleValue);
+            printf("%g", t->value.doubleValue);
             break;
         case STR:
             printf("%s", stringTable[t->value.intValue - 1]);
