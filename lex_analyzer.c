@@ -166,7 +166,7 @@ void print_token(Token* t) {
             printf("%d", t->value.intValue);
             break;
         case REAL:
-            printf("%g", t->value.doubleValue);
+            printf("%f", t->value.doubleValue);
             break;
         case STR:
             printf("%s", stringTable[t->value.intValue - 1]);

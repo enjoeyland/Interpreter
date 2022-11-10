@@ -86,8 +86,7 @@ ParseNode* statement() {
 ParseNode* after_variable() {
     if (isLookahead(ASSIGN)) {
         ParseNode* a = match(ASSIGN);
-        ParseNode* e = expression();
-        match(NEW_LINE);
+        ParseNode* e = statement();
         ////////////////////////
         a->child_num = 2;
         a->second = e;

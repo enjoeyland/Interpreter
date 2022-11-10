@@ -28,7 +28,7 @@ sub("abc123",3,3)
 
 # 5) assignment expression
 hello3 = "hello" * 3
-i = j = 20 # 다시 해야함
+i = j = 20
 
 # 7) ( ) expression
 -5*(3+4)
