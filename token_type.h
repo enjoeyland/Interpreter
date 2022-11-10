@@ -38,7 +38,7 @@ typedef enum _TokenType {
 
 #define NONE -1
 #define V_INT 0
-#define V_DOUBLE 1
+#define V_REAL 1
 
 union Value {
     int intValue;

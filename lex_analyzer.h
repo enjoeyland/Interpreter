@@ -15,11 +15,17 @@ Token getComma();
 Token getBuiltinFunction();
 Token getParserDirective();
 
+int symbolTableIndex;
+char symbolTable[100][11];
 int getSymbolIdex(char*);
+int getSymbolIdex_insert(char*);
 void printSymbolTable();
 Token getVariable();
 
+int stringTableIndex;
+char stringTable[100][100];
 int getStringIdex(char*);
+int getStringIdex_insert(char*);
 void printStringTable();
 Token getString();
 

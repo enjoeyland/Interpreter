@@ -60,7 +60,7 @@ Token getInterger() {
 Token getReal() {
     char* eptr;
     double d = strtod(yytext, &eptr);
-    return (Token){REAL, .value.doubleValue = d, V_DOUBLE};
+    return (Token){REAL, .value.doubleValue = d, V_REAL};
 }
 
 Token getBracket() {
@@ -88,9 +88,6 @@ Token getParserDirective() {
     }
 }
 
-int symbolTableIndex = 0;
-char symbolTable[100][11];
-
 int getSymbolIdex(char* symbol) {
     for (int i = 0; i < symbolTableIndex; i++) {
         if (strcmp(symbol, symbolTable[i]) == 0) {
@@ -98,6 +95,21 @@ int getSymbolIdex(char* symbol) {
         }
     }
     return -1;
+}
+int getSymbolIdex_insert(char* symbol) {
+    int len = strlen(symbol);
+    int id_len = len > 10 ? 10 : len;
+
+    char limited_symbol[11];
+    strncpy(limited_symbol, symbol, id_len);
+    limited_symbol[id_len] = '\0';
+
+    int index = getSymbolIdex(limited_symbol);
+    if (index == -1) {
+        strncpy(symbolTable[symbolTableIndex++], limited_symbol, id_len);
+        index = symbolTableIndex;
+    }
+    return index;
 }
 
 void printSymbolTable() {
@@ -110,31 +122,27 @@ void printSymbolTable() {
 }
 
 Token getVariable() {
-    int id_len = yyleng > 10 ? 10 : yyleng;
-
-    char symbol[11];
-    strncpy(symbol, yytext, id_len);
-    symbol[id_len] = '\0';
-
-    int index = getSymbolIdex(symbol);
-    if (index == -1) {
-        strncpy(symbolTable[symbolTableIndex++], symbol, id_len);
-        index = symbolTableIndex;
-    }
-    return (Token){VARIABLE, index, V_INT};
+    return (Token){VARIABLE, getSymbolIdex_insert(yytext), V_INT};
 }
 
-int stringTableIndex = 0;
-char stringTable[100][100];
-
-int getStringIdex(char* symbol) {
+int getStringIdex(char* str) {
     for (int i = 0; i < stringTableIndex; i++) {
-        if (strcmp(symbol, stringTable[i]) == 0) {
+        if (strcmp(str, stringTable[i]) == 0) {
             return i + 1;
         }
     }
     return -1;
 }
+
+int getStringIdex_insert(char* str) {
+    int index = getStringIdex(str);
+    if (index == -1) {
+        strncpy(stringTable[stringTableIndex++], str, strlen(str));
+        index = stringTableIndex;
+    }
+    return index;
+}
+
 void printStringTable() {
     printf("\n");
     printf("index|\tstring\n");
@@ -145,12 +153,7 @@ void printStringTable() {
 }
 
 Token getString() {
-    int index = getStringIdex(yytext);
-    if (index == -1) {
-        strncpy(stringTable[stringTableIndex++], yytext, yyleng);
-        index = stringTableIndex;
-    }
-    return (Token){STR, index, V_INT};
+    return (Token){STR, getStringIdex_insert(yytext), V_INT};
 }
 
 void print_token(Token* t) {
