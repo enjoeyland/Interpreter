@@ -7,9 +7,10 @@
 3 + sub("hello",2,2) * 3
 
 # 3) variables
-variables # var = exp으로 처리되고 있음
+variables
 compil2r
 exampl2
+hi * 3 # 에러남
 
 # 4) numeric expression
 3+3
@@ -26,7 +27,8 @@ exampl2
 sub("abc123",3,3)
 
 # 5) assignment expression
-hello3 = "hello" * 3 # 멈춤
+hello3 = "hello" * 3
+i = j = 20 # 다시 해야함
 
 # 7) ( ) expression
 -5*(3+4)
