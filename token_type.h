@@ -17,6 +17,7 @@ typedef enum _TokenClass {
 } TokenClass;
 
 typedef enum _TokenType {
+    FAIL,
     VARIABLE,
     INT,
     REAL,
@@ -45,11 +46,12 @@ union Value {
     double doubleValue;
 };
 struct _Token {
-    int type;
+    TokenType type;
     union Value value;
     int valueType;
 } typedef Token;
 extern Token failToken;
+extern char* tokenTypeName[17];
 
 int isEqual(Token t1, Token t2);
 int isFailToken(Token t);
