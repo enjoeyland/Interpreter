@@ -290,14 +290,11 @@ ParseNode* operateDivide(Token* operand1, Token* operand2) {
 ParseNode* operateAssign(Token* operand1, Token* operand2) {
     SymbolEntry* se = &symbolTable[operand1->value.intValue - 1];
     if (isTypeOF(operand2, INT)) {
-        se->type = INT;
-        se->value.intValue = operand2->value.intValue;
+        se->token = (Token){INT, operand2->value.intValue, V_INT};
     } else if (isTypeOF(operand2, REAL)) {
-        se->type = REAL;
-        se->value.intValue = operand2->value.doubleValue;
+        se->token = (Token){REAL, operand2->value.doubleValue, V_REAL};
     } else if (isTypeOF(operand2, STR)) {
-        se->type = STR;
-        se->value.intValue = operand2->value.intValue;
+        se->token = (Token){STR, operand2->value.intValue, V_INT};
     }
     ParseNode* pn = malloc(sizeof(ParseNode));
     pn->current = operand2;
@@ -318,22 +315,11 @@ ParseNode* operateSplit(Token* str, Token* n1, Token* n2) {
 }
 
 ParseNode* solveVariable(Token* variable) {
-    Token* t = malloc(sizeof(Token));
+    Token* t;
     SymbolEntry* se = &symbolTable[variable->value.intValue - 1];
-    if (se->type == INT) {
-        t->type = INT;
-        t->value.intValue = se->value.intValue;
-        t->valueType = V_INT;
-    } else if (se->type == REAL) {
-        t->type = REAL;
-        t->value.doubleValue = se->value.doubleValue;
-        t->valueType = V_REAL;
-    } else if (se->type == STR) {
-        t->type = STR;
-        t->value.intValue = se->value.intValue;
-        t->valueType = V_INT;
+    if (isTypeOF(&se->token, INT) || isTypeOF(&se->token, REAL) || isTypeOF(&se->token, STR)) {
+        t = &se->token;
     } else {
-        free(t);
         t = variable;
     }
     ParseNode* pn = malloc(sizeof(ParseNode));

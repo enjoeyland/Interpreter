@@ -114,10 +114,13 @@ int getSymbolIdex_insert(char* symbol) {
 
 void printSymbolTable() {
     printf("\n");
-    printf("index|\tsymbol\n");
-    printf("----------------\n");
+    printf("index| %10s| %8s|\tvalue\n", "symbol", "type");
+    printf("---------------------------------------\n");
     for (int i = 0; i < symbolTableIndex; i++) {
-        printf("%3d  |\t%s\n", i + 1, symbolTable[i].name);
+        SymbolEntry se = symbolTable[i];
+        printf("%3d  | %10s| %8s|\t", i + 1, se.name, tokenTypeName[se.token.type]);
+        printToken(&se.token);
+        printf("\n");
     }
 }
 
@@ -156,7 +159,7 @@ Token getString() {
     return (Token){STR, getStringIdex_insert(yytext), V_INT};
 }
 
-void print_token(Token* t) {
+void printToken(Token* t) {
     if (t == NULL) return;
     switch (t->type) {
         case FAIL:

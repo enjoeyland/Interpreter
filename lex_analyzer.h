@@ -5,7 +5,7 @@
 
 Token getNextToken();
 
-void print_token(Token*);
+void printToken(Token*);
 
 Token getOperator();
 Token getInterger();
@@ -17,8 +17,7 @@ Token getParserDirective();
 
 struct _SymbolEntry {
     char name[11];
-    int type;
-    union Value value;
+    Token token;
 } typedef SymbolEntry;
 
 int symbolTableIndex;

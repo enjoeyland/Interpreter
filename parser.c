@@ -195,7 +195,7 @@ extern ParseNode* queue[MAX];
 int print_syntax_tree_by_level() {
     ParseNode* node;
     while ((node = dequeue()) != NULL) {
-        print_token(node->current);
+        printToken(node->current);
         if (node->child_num == 0) {
             printf(" ");
             continue;
