@@ -12,6 +12,6 @@ ParseNode* operateMinus(Token*, Token*);
 ParseNode* operateMultiply(Token*, Token*);
 ParseNode* operateDivide(Token*, Token*);
 ParseNode* operateAssign(Token*, Token*);
-ParseNode* operateSplit(Token*, Token*, Token*);
+ParseNode* operateSub(Token*, Token*, Token*);
 
 #endif  // EXECUTE_H

@@ -135,8 +135,8 @@ ParseNode* factor() {
         match(BRACKET_RIGHT);
         ////////////////////////
         return e;
-    } else if (isLookahead(BUILTIN_SPLIT)) {
-        ParseNode* sp = match(BUILTIN_SPLIT);
+    } else if (isLookahead(BUILTIN_SUB)) {
+        ParseNode* sp = match(BUILTIN_SUB);
         match(BRACKET_LEFT);
         ParseNode* s = expression();
         match(COMMA);

@@ -5,12 +5,21 @@
 
 #include "lex.yy.h"
 
+void lexical_error(char* msg) {
+    printf("lexical error: %s\n", msg);
+}
+
 Token getNextToken() {
     int token = yylex();
     if (token == 0) {
         return failToken;
     }
     switch (token) {
+        case C_FAIL:
+            lexical_error(yytext);
+            return failToken;
+        case C_EOF:
+            return (Token){T_EOF, 0, NONE};
         case C_OPERATOR:
             return getOperator();
         case C_INT:
@@ -76,7 +85,7 @@ Token getComma() {
     return (Token){COMMA, 0, NONE};
 }
 Token getBuiltinFunction() {
-    return (Token){BUILTIN_SPLIT, 0, NONE};
+    return (Token){BUILTIN_SUB, 0, NONE};
 }
 Token getParserDirective() {
     char ast[] = "$ast";

@@ -2,7 +2,8 @@
 #define TOKEN_TYPE_H
 
 typedef enum _TokenClass {
-    C_FAIL,
+    C_FAIL = -1,
+    C_EOF,
     C_VARIABLE,
     C_INT,
     C_REAL,
@@ -17,7 +18,8 @@ typedef enum _TokenClass {
 } TokenClass;
 
 typedef enum _TokenType {
-    FAIL,
+    FAIL = -1,
+    T_EOF,
     VARIABLE,
     INT,
     REAL,
@@ -25,7 +27,7 @@ typedef enum _TokenType {
     COMMA,
     NEW_LINE,
 
-    BUILTIN_SPLIT,
+    BUILTIN_SUB,
 
     PLUS,
     MINUS,
@@ -56,8 +58,9 @@ struct _Token {
 extern Token failToken;
 extern char* tokenTypeName[17];
 
-int isEqual(Token t1, Token t2);
-int isFailToken(Token t);
-int isNewlineToken(Token t);
+int isEqual(Token, Token);
+int isFailToken(Token);
+int isEOFToken(Token);
+int isNewlineToken(Token);
 
 #endif

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "execute.h"
 #include "lex_analyzer.h"
@@ -29,8 +30,14 @@ int main() {
     int len = 0;
     Token token;
     printf("> ");
-    while (!isFailToken(token = getNextToken())) {
-        if (token.type == ABSTRACT_SYNTAX_TREE) {
+    while (!isEOFToken(token = getNextToken())) {
+        if (token.type == FAIL) {
+            while (!isNewlineToken(token = getNextToken())) {
+                if (isEOFToken(token)) exit(1);
+            }
+            len = 0;
+            printf("> ");
+        } else if (token.type == ABSTRACT_SYNTAX_TREE) {
             print_syntax_tree(last_syntax_tree);
         } else if (token.type == SYMBOL_TABLE) {
             printSymbolTable();

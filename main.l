@@ -29,5 +29,5 @@ sub {return C_BUILTIN_FUCTION;}
 \"(\\([\nabfnrt\\'"]|ooo|xdd)|[^"\\\n])*\"  {return C_STR;}
 
 $ast|$symbol    {return C_PARSER_DIRECTIVE;}
-
+. {return C_FAIL;}
 %%

@@ -8,6 +8,11 @@
 #include "parser.h"
 #include "token_type.h"
 
+void runtime_error(char* msg) {
+    printf("runtime error: %s\n", msg);
+    exit(1);
+}
+
 ParseNode* execute(ParseNode* syntax_tree) {
     if (syntax_tree == NULL) {
         ParseNode* pn = malloc(sizeof(ParseNode));
@@ -27,7 +32,7 @@ ParseNode* execute(ParseNode* syntax_tree) {
         case MINUS:
         case MULTIPLY:
         case DIVIDE:
-        case BUILTIN_SPLIT:
+        case BUILTIN_SUB:
             return operate(token_type, execute(syntax_tree->first), execute(syntax_tree->second), execute(syntax_tree->third));
         case ASSIGN:
             return operateAssign(syntax_tree->first->current, execute(syntax_tree->second)->current);
@@ -62,8 +67,8 @@ ParseNode* operate(TokenType token_type, ParseNode* first, ParseNode* second, Pa
         case DIVIDE:
             result = operateDivide(first->current, second->current);
             break;
-        case BUILTIN_SPLIT:
-            result = operateSplit(first->current, second->current, third->current);
+        case BUILTIN_SUB:
+            result = operateSub(first->current, second->current, third->current);
             break;
     }
     free(first);
@@ -303,7 +308,7 @@ ParseNode* operateAssign(Token* operand1, Token* operand2) {
     return pn;
 }
 
-ParseNode* operateSplit(Token* str, Token* n1, Token* n2) {
+ParseNode* operateSub(Token* str, Token* n1, Token* n2) {
     Token* t = malloc(sizeof(Token));
 
     t->type = STR;
