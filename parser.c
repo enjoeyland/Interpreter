@@ -176,6 +176,8 @@ ParseNode* unsigned_factor() {
         return e;
     } else if (isLookahead(INT) || isLookahead(REAL)) {
         return num();
+    } else if (isLookahead(VARIABLE)) {
+        return match(VARIABLE);
     } else {
         syntax_error("unsigned factor");
     }

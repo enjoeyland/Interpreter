@@ -198,13 +198,13 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
 ParseNode* operateMinus(Token* operand1, Token* operand2) {
     Token* t = malloc(sizeof(Token));
     if (operand2 == NULL && isTypeOF(operand1, INT)) {
-        free(t);
-        operand1->value.intValue *= -1;
-        t = operand1;
+        t->type = INT;
+        t->value.intValue = -1 * operand1->value.intValue;
+        t->valueType = V_INT;
     } else if (operand2 == NULL && isTypeOF(operand1, REAL)) {
-        free(t);
-        operand1->value.doubleValue *= -1;
-        t = operand1;
+        t->type = REAL;
+        t->value.doubleValue = -1 * operand1->value.doubleValue;
+        t->valueType = V_REAL;
     } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, INT)) {
         t->type = INT;
         t->value.intValue = operand1->value.intValue - operand2->value.intValue;
