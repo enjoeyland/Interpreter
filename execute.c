@@ -13,6 +13,13 @@ void runtime_error(char* msg) {
     exit(1);
 }
 
+void interpret(ParseNode* syntax_tree) {
+    ParseNode* result = execute(syntax_tree);
+    if (result->current) {
+        printf("%s\n", getTokenValue(result->current));
+    }
+}
+
 ParseNode* execute(ParseNode* syntax_tree) {
     if (syntax_tree == NULL) {
         ParseNode* pn = malloc(sizeof(ParseNode));
@@ -37,19 +44,6 @@ ParseNode* execute(ParseNode* syntax_tree) {
         case ASSIGN:
             return operateAssign(syntax_tree->first->current, execute(syntax_tree->second)->current);
     }
-}
-
-int getIntValue(Token* token) {
-    if (token->type == INT) return token->value.intValue;
-}
-double getRealValue(Token* token) {
-    if (token->type == REAL) return token->value.doubleValue;
-}
-int isINT(Token* token) {
-    return token->type == INT;
-}
-int isREAL(Token* token) {
-    return token->type == INT;
 }
 
 ParseNode* operate(TokenType token_type, ParseNode* first, ParseNode* second, ParseNode* third) {
@@ -115,32 +109,28 @@ int divideStr(char* str1, char* str2) {
     return count;
 }
 
-int isTypeOF(Token* token, int token_type) {
-    return token->type == token_type;
-}
-
 ParseNode* operatePlus(Token* operand1, Token* operand2) {
     Token* t = malloc(sizeof(Token));
-    if (operand2 == NULL && (isTypeOF(operand1, INT) || isTypeOF(operand1, REAL))) {
+    if (operand2 == NULL && (isTypeOf(operand1, INT) || isTypeOf(operand1, REAL))) {
         free(t);
         t = operand1;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, INT)) {
         t->type = INT;
         t->value.intValue = operand1->value.intValue + operand2->value.intValue;
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.intValue + operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, INT)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue + operand2->value.intValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue + operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, STR) && isTypeOF(operand2, STR)) {
+    } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, STR)) {
         t->type = STR;
         char* str1 = removeDoubleQuote(stringTable[operand1->value.intValue - 1]);
         char* str2 = removeDoubleQuote(stringTable[operand2->value.intValue - 1]);
@@ -150,7 +140,7 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
         result = addDoubleQuote(result);
         t->value.intValue = getStringIdex_insert(result);
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, STR)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, STR)) {
         t->type = STR;
         char str1[20];
         sprintf(str1, "%d", operand1->value.intValue);
@@ -161,7 +151,7 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
         result = addDoubleQuote(result);
         t->value.intValue = getStringIdex_insert(result);
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, STR) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, INT)) {
         t->type = STR;
         char* str1 = removeDoubleQuote(stringTable[operand1->value.intValue - 1]);
         char str2[20];
@@ -172,7 +162,7 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
         result = addDoubleQuote(result);
         t->value.intValue = getStringIdex_insert(result);
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, STR)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, STR)) {
         t->type = STR;
         char str1[20];
         sprintf(str1, "%g", operand1->value.doubleValue);
@@ -183,7 +173,7 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
         result = addDoubleQuote(result);
         t->value.intValue = getStringIdex_insert(result);
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, STR) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, REAL)) {
         t->type = STR;
         char* str1 = removeDoubleQuote(stringTable[operand1->value.intValue - 1]);
         char str2[20];
@@ -202,27 +192,27 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
 
 ParseNode* operateMinus(Token* operand1, Token* operand2) {
     Token* t = malloc(sizeof(Token));
-    if (operand2 == NULL && isTypeOF(operand1, INT)) {
+    if (operand2 == NULL && isTypeOf(operand1, INT)) {
         t->type = INT;
         t->value.intValue = -1 * operand1->value.intValue;
         t->valueType = V_INT;
-    } else if (operand2 == NULL && isTypeOF(operand1, REAL)) {
+    } else if (operand2 == NULL && isTypeOf(operand1, REAL)) {
         t->type = REAL;
         t->value.doubleValue = -1 * operand1->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, INT)) {
         t->type = INT;
         t->value.intValue = operand1->value.intValue - operand2->value.intValue;
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.intValue - operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, INT)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue - operand2->value.intValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue - operand2->value.doubleValue;
         t->valueType = V_REAL;
@@ -235,23 +225,23 @@ ParseNode* operateMinus(Token* operand1, Token* operand2) {
 
 ParseNode* operateMultiply(Token* operand1, Token* operand2) {
     Token* t = malloc(sizeof(Token));
-    if (isTypeOF(operand1, INT) && isTypeOF(operand2, INT)) {
+    if (isTypeOf(operand1, INT) && isTypeOf(operand2, INT)) {
         t->type = INT;
         t->value.intValue = operand1->value.intValue * operand2->value.intValue;
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.intValue * operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, INT)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue * operand2->value.intValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue * operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, STR) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, INT)) {
         t->type = STR;
         char* s = repeatStr(stringTable[operand1->value.intValue - 1], operand2->value.intValue);
         t->value.intValue = getStringIdex_insert(s);
@@ -264,23 +254,23 @@ ParseNode* operateMultiply(Token* operand1, Token* operand2) {
 
 ParseNode* operateDivide(Token* operand1, Token* operand2) {
     Token* t = malloc(sizeof(Token));
-    if (isTypeOF(operand1, INT) && isTypeOF(operand2, INT)) {
+    if (isTypeOf(operand1, INT) && isTypeOf(operand2, INT)) {
         t->type = INT;
         t->value.intValue = operand1->value.intValue / operand2->value.intValue;
         t->valueType = V_INT;
-    } else if (isTypeOF(operand1, INT) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, INT) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.intValue / operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, INT)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, INT)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue / operand2->value.intValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, REAL) && isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, REAL)) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue / operand2->value.doubleValue;
         t->valueType = V_REAL;
-    } else if (isTypeOF(operand1, STR) && isTypeOF(operand2, STR)) {
+    } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, STR)) {
         t->type = INT;
         t->value.intValue = divideStr(stringTable[operand1->value.intValue - 1], stringTable[operand2->value.intValue - 1]);
         t->valueType = V_INT;
@@ -291,16 +281,16 @@ ParseNode* operateDivide(Token* operand1, Token* operand2) {
 }
 
 ParseNode* operateAssign(Token* operand1, Token* operand2) {
-    if (!isTypeOF(operand1, VARIABLE)) {
+    if (!isTypeOf(operand1, VARIABLE)) {
         syntax_error("assign");
     }
 
     SymbolEntry* se = &symbolTable[operand1->value.intValue - 1];
-    if (isTypeOF(operand2, INT)) {
+    if (isTypeOf(operand2, INT)) {
         se->token = (Token){INT, operand2->value.intValue, V_INT};
-    } else if (isTypeOF(operand2, REAL)) {
+    } else if (isTypeOf(operand2, REAL)) {
         se->token = (Token){REAL, operand2->value.doubleValue, V_REAL};
-    } else if (isTypeOF(operand2, STR)) {
+    } else if (isTypeOf(operand2, STR)) {
         se->token = (Token){STR, operand2->value.intValue, V_INT};
     }
     ParseNode* pn = malloc(sizeof(ParseNode));
@@ -324,7 +314,7 @@ ParseNode* operateSub(Token* str, Token* n1, Token* n2) {
 ParseNode* solveVariable(Token* variable) {
     Token* t;
     SymbolEntry* se = &symbolTable[variable->value.intValue - 1];
-    if (isTypeOF(&se->token, INT) || isTypeOF(&se->token, REAL) || isTypeOF(&se->token, STR)) {
+    if (isTypeOf(&se->token, INT) || isTypeOf(&se->token, REAL) || isTypeOf(&se->token, STR)) {
         t = &se->token;
     } else {
         t = variable;

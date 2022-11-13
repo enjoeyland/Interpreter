@@ -63,4 +63,5 @@ int isFailToken(Token);
 int isEOFToken(Token);
 int isNewlineToken(Token);
 
+int isTypeOf(Token*, TokenType);
 #endif

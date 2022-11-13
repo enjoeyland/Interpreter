@@ -19,8 +19,7 @@ struct _ParseNode {
 
 Token* getCurrentToken();
 
-ParseNode* operator_add_sub();
-ParseNode* operator_mul_div();
+ParseNode* getSyntaxTree(Token* token_statement, int len);
 
 ParseNode* statement();
 ParseNode* sub_statement();
@@ -30,8 +29,12 @@ ParseNode* factor();
 ParseNode* unsigned_factor();
 ParseNode* num();
 
+ParseNode* operator_add_sub();
+ParseNode* operator_mul_div();
+
 void print_syntax_tree(ParseNode*);
 ParseNode* copyTree(ParseNode*);
+void freeSyntaxTree(ParseNode*);
 Token* syntax_error(char*);
 
 #endif  // PARSER_H

@@ -1,6 +1,5 @@
 #include "token_type.h"
 
-#include <stdio.h>
 #include <string.h>
 
 char* tokenTypeName[] = {"", "variable", "int", "real", "string", ",", "\\n", "sub", "+", "-", "*", "/", "=", "(", ")"};
@@ -17,4 +16,8 @@ int isEOFToken(Token t) {
 }
 int isNewlineToken(Token t) {
     return isEqual(t, (Token){NEW_LINE, 0, NONE});
+}
+
+int isTypeOf(Token* token, TokenType token_type) {
+    return token->type == token_type;
 }

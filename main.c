@@ -6,50 +6,17 @@
 #include "parser.h"
 #include "token_type.h"
 
-extern TokenParser tp;
-ParseNode* last_syntax_tree;
-Token token_statement[100];
-void interpret(Token* token_statement, int len) {
-    // for (int i = 0; i < len; i++) {
-    //     printf("%d ", token_statement[i].type);
-    // }
-    // printf("\n");
-
-    tp = (TokenParser){token_statement, len, 0};
-    ParseNode* syntax_tree = statement();
-
-    last_syntax_tree = copyTree(syntax_tree);
-
-    ParseNode* result = execute(syntax_tree);
-    if (result->current) {
-        printf("%s\n", getTokenValue(result->current));
-    }
-}
-
 int main() {
-    int len = 0;
-    Token token;
-    printf("> ");
-    while (!isEOFToken(token = getNextToken())) {
-        if (token.type == FAIL) {
-            while (!isNewlineToken(token = getNextToken())) {
-                if (isEOFToken(token)) exit(1);
-            }
-            len = 0;
-            printf("> ");
-        } else if (token.type == ABSTRACT_SYNTAX_TREE) {
-            print_syntax_tree(last_syntax_tree);
-        } else if (token.type == SYMBOL_TABLE) {
-            printSymbolTable();
-        } else {
-            token_statement[len++] = token;
-            if (isNewlineToken(token)) {
-                interpret(token_statement, len);
-                len = 0;
-                printf("> ");
-            }
+    int len;
+    int isEOF = 0;
+    while (!isEOF) {
+        Token* token_statement = malloc(sizeof(Token) * 100);
+        printf("> ");
+        getTokenStatement(token_statement, &len, &isEOF);
+        if (isFailToken(token_statement[0])) {
+            continue;
         }
+        ParseNode* syntax_tree = getSyntaxTree(token_statement, len);
+        interpret(syntax_tree);
     }
-    token_statement[len++] = (Token){NEW_LINE, 0, NONE};
-    interpret(token_statement, len);
 }

@@ -8,15 +8,16 @@
 #include "token_type.h"
 
 TokenParser tp;
+ParseNode* last_syntax_tree;
 
-// TODO: error 위치를 프린트 하기 위해서는 Token에 추가적인 정보를 갖고 있어야 한다.
-Token* syntax_error(char* msg) {
+Token*
+syntax_error(char* msg) {
     printf("syntax error: %s\n", msg);
     exit(1);
     return getCurrentToken();
 }
 
-int isLookahead(int type) {
+int isLookahead(TokenType type) {
     return tp.statement[tp.current].type == type;
 }
 
@@ -24,12 +25,12 @@ Token* getCurrentToken() {
     return &tp.statement[tp.current];
 }
 
-ParseNode* match(int type) {
+ParseNode* match(TokenType type) {
     if (isLookahead(type)) {
         Token* t = getCurrentToken();
         tp.current++;
 
-        if (type == COMMA || type == BRACKET_LEFT || type == BRACKET_RIGHT || type == NEW_LINE) {
+        if (type == COMMA || type == BRACKET_LEFT || type == BRACKET_RIGHT || type == NEW_LINE || type == ABSTRACT_SYNTAX_TREE || type == SYMBOL_TABLE) {
             return NULL;
         }
         ParseNode* pn = malloc(sizeof(ParseNode));
@@ -44,28 +45,30 @@ ParseNode* match(int type) {
     }
 }
 
-// operator
-ParseNode* operator_add_sub() {
-    if (isLookahead(PLUS)) {
-        return match(PLUS);
-    } else if (isLookahead(MINUS)) {
-        return match(MINUS);
-    } else {
-        syntax_error("oper + -");
+ParseNode* getSyntaxTree(Token* token_statement, int len) {
+    tp = (TokenParser){token_statement, len, 0};
+    ParseNode* syntax_tree = statement();
+    if (syntax_tree) {
+        freeSyntaxTree(last_syntax_tree);
+        last_syntax_tree = copyTree(syntax_tree);
     }
-}
-ParseNode* operator_mul_div() {
-    if (isLookahead(MULTIPLY)) {
-        return match(MULTIPLY);
-    } else if (isLookahead(DIVIDE)) {
-        return match(DIVIDE);
-    } else {
-        syntax_error("oper * /");
-    }
+    return syntax_tree;
 }
 
 ParseNode* statement() {
     if (isLookahead(NEW_LINE)) {
+        return NULL;
+    } else if (isLookahead(ABSTRACT_SYNTAX_TREE)) {
+        match(ABSTRACT_SYNTAX_TREE);
+        match(NEW_LINE);
+        ////////////////////////
+        print_syntax_tree(last_syntax_tree);
+        return NULL;
+    } else if (isLookahead(SYMBOL_TABLE)) {
+        match(SYMBOL_TABLE);
+        match(NEW_LINE);
+        ////////////////////////
+        printSymbolTable();
         return NULL;
     }
 
@@ -219,6 +222,26 @@ int print_syntax_tree_by_level() {
     }
 }
 
+// operator
+ParseNode* operator_add_sub() {
+    if (isLookahead(PLUS)) {
+        return match(PLUS);
+    } else if (isLookahead(MINUS)) {
+        return match(MINUS);
+    } else {
+        syntax_error("oper + -");
+    }
+}
+ParseNode* operator_mul_div() {
+    if (isLookahead(MULTIPLY)) {
+        return match(MULTIPLY);
+    } else if (isLookahead(DIVIDE)) {
+        return match(DIVIDE);
+    } else {
+        syntax_error("oper * /");
+    }
+}
+
 void print_syntax_tree(ParseNode* pt) {
     if (pt == NULL) return;
     enqueue(pt);
@@ -237,4 +260,13 @@ ParseNode* copyTree(ParseNode* pt) {
     new->second = copyTree(pt->second);
     new->third = copyTree(pt->third);
     return new;
+}
+
+void freeSyntaxTree(ParseNode* syntax_tree) {
+    if (syntax_tree == NULL) return;
+    freeSyntaxTree(syntax_tree->first);
+    freeSyntaxTree(syntax_tree->second);
+    freeSyntaxTree(syntax_tree->third);
+    free(syntax_tree->current);
+    free(syntax_tree);
 }

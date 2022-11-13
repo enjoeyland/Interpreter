@@ -3,6 +3,7 @@
 
 #include "token_type.h"
 
+void getTokenStatement(Token*, int* len, int* eof);
 Token getNextToken();
 
 char* getTokenValue(Token*);

@@ -5,8 +5,29 @@
 
 #include "lex.yy.h"
 
+// TODO: 위치 print
 void lexical_error(char* msg) {
     printf("lexical error: %s\n", msg);
+}
+
+void getTokenStatement(Token* token_statement, int* len, int* eof) {
+    *len = 0;
+    Token token;
+    while (!isNewlineToken(token = getNextToken()) && !isEOFToken(token)) {
+        if (isTypeOf(&token, FAIL)) {
+            token_statement[0] = failToken;
+            *len = 1;
+            while (!isNewlineToken(token = getNextToken()) && !isEOFToken(token)) {
+            }
+            break;
+        } else {
+            token_statement[(*len)++] = token;
+        }
+    }
+    if (isEOFToken(token)) {
+        *eof = 1;
+    }
+    token_statement[(*len)++] = (Token){NEW_LINE, 0, NONE};
 }
 
 Token getNextToken() {
