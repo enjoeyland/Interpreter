@@ -10,7 +10,7 @@
 variables
 compil2r
 exampl2
-hi * 3 # 에러남
+hi * 3
 
 # 4) numeric expression
 3+3

@@ -27,9 +27,10 @@ ParseNode* execute(ParseNode* syntax_tree) {
         case MINUS:
         case MULTIPLY:
         case DIVIDE:
-        case ASSIGN:
         case BUILTIN_SPLIT:
             return operate(token_type, execute(syntax_tree->first), execute(syntax_tree->second), execute(syntax_tree->third));
+        case ASSIGN:
+            return operateAssign(syntax_tree->first->current, execute(syntax_tree->second)->current);
     }
 }
 
@@ -60,9 +61,6 @@ ParseNode* operate(TokenType token_type, ParseNode* first, ParseNode* second, Pa
             break;
         case DIVIDE:
             result = operateDivide(first->current, second->current);
-            break;
-        case ASSIGN:
-            result = operateAssign(first->current, second->current);
             break;
         case BUILTIN_SPLIT:
             result = operateSplit(first->current, second->current, third->current);
@@ -288,6 +286,10 @@ ParseNode* operateDivide(Token* operand1, Token* operand2) {
 }
 
 ParseNode* operateAssign(Token* operand1, Token* operand2) {
+    if (!isTypeOF(operand1, VARIABLE)) {
+        syntax_error("assign");
+    }
+
     SymbolEntry* se = &symbolTable[operand1->value.intValue - 1];
     if (isTypeOF(operand2, INT)) {
         se->token = (Token){INT, operand2->value.intValue, V_INT};

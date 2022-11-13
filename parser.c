@@ -67,38 +67,37 @@ ParseNode* operator_mul_div() {
 ParseNode* statement() {
     if (isLookahead(NEW_LINE)) {
         return NULL;
-    } else if (isLookahead(VARIABLE)) {
-        ParseNode* v = match(VARIABLE);
-        ParseNode* av = after_variable();
-        ////////////////////////
-        if (av == NULL) {
-            return v;
-        } else {
-            av->first = v;
-            return av;
-        }
-    } else {
-        ParseNode* e = expression();
-        match(NEW_LINE);
-        ////////////////////////
-        return e;
     }
-}
-ParseNode* after_variable() {
-    if (isLookahead(ASSIGN)) {
+
+    ParseNode* s = expression();
+    while (isLookahead(ASSIGN)) {
         ParseNode* a = match(ASSIGN);
-        ParseNode* e = statement();
+        ParseNode* s2 = sub_statement();
         ////////////////////////
         a->child_num = 2;
-        a->second = e;
-        return a;
-    } else if (isLookahead(NEW_LINE)) {
-        match(NEW_LINE);
-        return NULL;
-    } else {
-        syntax_error("after variable");
+        a->first = s;
+        a->second = s2;
+        s = a;
     }
+    match(NEW_LINE);
+    ////////////////////////
+    return s;
 }
+ParseNode* sub_statement() {
+    ParseNode* s = expression();
+    while (isLookahead(ASSIGN)) {
+        ParseNode* a = match(ASSIGN);
+        ParseNode* s2 = sub_statement();
+        ////////////////////////
+        a->child_num = 2;
+        a->first = s;
+        a->second = s2;
+        s = a;
+    }
+    ////////////////////////
+    return s;
+}
+
 ParseNode* expression() {
     ParseNode* e = term();
     while (isLookahead(PLUS) || isLookahead(MINUS)) {
@@ -196,7 +195,7 @@ extern ParseNode* queue[MAX];
 int print_syntax_tree_by_level() {
     ParseNode* node;
     while ((node = dequeue()) != NULL) {
-        printToken(node->current);
+        printf("%s", getTokenValue(node->current));
         if (node->child_num == 0) {
             printf(" ");
             continue;
