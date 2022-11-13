@@ -225,3 +225,14 @@ void print_syntax_tree(ParseNode* pt) {
         print_syntax_tree_by_level();
     }
 }
+
+ParseNode* copyTree(ParseNode* pt) {
+    if (pt == NULL) return NULL;
+    ParseNode* new = malloc(sizeof(ParseNode));
+    new->current = pt->current;
+    new->child_num = pt->child_num;
+    new->first = copyTree(pt->first);
+    new->second = copyTree(pt->second);
+    new->third = copyTree(pt->third);
+    return new;
+}

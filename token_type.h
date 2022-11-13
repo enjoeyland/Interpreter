@@ -34,7 +34,10 @@ typedef enum _TokenType {
     ASSIGN,
 
     BRACKET_LEFT,
-    BRACKET_RIGHT
+    BRACKET_RIGHT,
+
+    ABSTRACT_SYNTAX_TREE,
+    SYMBOL_TABLE
 } TokenType;
 
 #define NONE -1

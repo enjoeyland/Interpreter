@@ -82,9 +82,9 @@ Token getParserDirective() {
     char ast[] = "$ast";
     char symbol[] = "$symbol";
     if (strcmp(yytext, ast) == 0) {
-        return (Token){BRACKET_LEFT, 0, NONE};
+        return (Token){ABSTRACT_SYNTAX_TREE, 0, NONE};
     } else if (strcmp(yytext, symbol) == 0) {
-        return (Token){BRACKET_LEFT, 0, NONE};
+        return (Token){SYMBOL_TABLE, 0, NONE};
     }
 }
 

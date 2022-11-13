@@ -31,5 +31,6 @@ ParseNode* unsigned_factor();
 ParseNode* num();
 
 void print_syntax_tree(ParseNode*);
+ParseNode* copyTree(ParseNode*);
 
 #endif  // PARSER_H
