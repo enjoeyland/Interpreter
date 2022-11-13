@@ -20,8 +20,7 @@ void interpret(Token* token_statement, int len) {
     last_syntax_tree = copyTree(syntax_tree);
 
     ParseNode* result = execute(syntax_tree);
-    printToken(result->current);
-    printf("\n");
+    printf("%s\n", getTokenValue(result->current));
 }
 
 int main() {

@@ -118,9 +118,7 @@ void printSymbolTable() {
     printf("---------------------------------------\n");
     for (int i = 0; i < symbolTableIndex; i++) {
         SymbolEntry se = symbolTable[i];
-        printf("%3d  | %10s| %8s|\t", i + 1, se.name, tokenTypeName[se.token.type]);
-        printToken(&se.token);
-        printf("\n");
+        printf("%3d  | %10s| %8s|\t%s\n", i + 1, se.name, tokenTypeName[se.token.type], getTokenValue(&se.token));
     }
 }
 
@@ -159,25 +157,27 @@ Token getString() {
     return (Token){STR, getStringIdex_insert(yytext), V_INT};
 }
 
-void printToken(Token* t) {
-    if (t == NULL) return;
+char* getTokenValue(Token* t) {
+    if (t == NULL) return "";
+    char* result = malloc(sizeof(char) * 100);
     switch (t->type) {
         case FAIL:
             break;
         case VARIABLE:
-            printf("%s", symbolTable[t->value.intValue - 1].name);
+            sprintf(result, "%s", symbolTable[t->value.intValue - 1].name);
             break;
         case INT:
-            printf("%d", t->value.intValue);
+            sprintf(result, "%d", t->value.intValue);
             break;
         case REAL:
-            printf("%f", t->value.doubleValue);
+            sprintf(result, "%f", t->value.doubleValue);
             break;
         case STR:
-            printf("%s", stringTable[t->value.intValue - 1]);
+            sprintf(result, "%s", stringTable[t->value.intValue - 1]);
             break;
         default:
-            printf("%s", tokenTypeName[t->type]);
+            sprintf(result, "%s", tokenTypeName[t->type]);
             break;
     }
+    return result;
 }

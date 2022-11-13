@@ -5,7 +5,7 @@
 
 Token getNextToken();
 
-void printToken(Token*);
+char* getTokenValue(Token*);
 
 Token getOperator();
 Token getInterger();

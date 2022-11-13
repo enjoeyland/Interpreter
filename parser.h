@@ -32,5 +32,6 @@ ParseNode* num();
 
 void print_syntax_tree(ParseNode*);
 ParseNode* copyTree(ParseNode*);
+Token* syntax_error(char*);
 
 #endif  // PARSER_H

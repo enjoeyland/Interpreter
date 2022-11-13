@@ -37,8 +37,9 @@ ParseNode* match(int type) {
         pn->child_num = 0;
         return pn;
     } else {
+        Token* t = getCurrentToken();
         char msg[100];
-        sprintf(msg, "match %d", type);
+        sprintf(msg, "match %s %s", tokenTypeName[t->type], getTokenValue(t));
         syntax_error(msg);
     }
 }
