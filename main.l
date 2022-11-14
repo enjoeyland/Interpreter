@@ -19,13 +19,15 @@ digit   [0-9]
 [()] {char_count+=yyleng; return C_BRACKET;}
 
 , {char_count+=yyleng; return C_COMMA;}
-\n {char_count+=yyleng; return C_NEW_LINE;}
+\n {char_count=0; return C_NEW_LINE;}
 sub {char_count+=yyleng; return C_BUILTIN_FUCTION;}
 
+{digit}+{letter}+   {char_count+=yyleng; return C_FAIL;}
 {digit}+    {char_count+=yyleng; return C_INT;}
 
 {digit}+"."{digit}* |
 {digit}*"."{digit}+ {char_count+=yyleng; return C_REAL;}
+
 
 {letter}({letter}|{digit})* {char_count+=yyleng; return C_VARIABLE;}
 

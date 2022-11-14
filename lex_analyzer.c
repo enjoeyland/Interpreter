@@ -8,7 +8,7 @@
 int char_count = 0;
 
 void lexical_error(char* msg) {
-    printf("lexical error(%d): %s\n", char_count, msg);
+    printf("lexical error(%d): %s\n", char_count - (int)strlen(msg) + 1, msg);
 }
 
 void getTokenStatement(Token* token_statement, int* len, int* eof) {
