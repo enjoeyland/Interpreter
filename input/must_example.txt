@@ -10,7 +10,6 @@
 variables
 compil2r
 exampl2
-hi * 3
 
 # 4) numeric expression
 3+3
@@ -34,4 +33,3 @@ i = j = 20
 -5*(3+4)
 "abc"+("abc")
 (sub(((("abc123"))),(3),(5)))
-# 정의 안한 변수 사용 # 아직 에러 안남

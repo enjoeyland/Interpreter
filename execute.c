@@ -289,6 +289,11 @@ ParseNode* operateMultiply(Token* operand1, Token* operand2) {
         t->value.doubleValue = operand1->value.doubleValue * operand2->value.doubleValue;
         t->valueType = V_REAL;
     } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, INT)) {
+        if (operand2->value.intValue < 0) {
+            free(t);
+            runtime_error("string * 음수는 정의되지 않음");
+            return &failParsing;
+        }
         t->type = STR;
         char* s = repeatStr(stringTable[operand1->value.intValue - 1], operand2->value.intValue);
         t->value.intValue = getStringIdex_insert(s);
