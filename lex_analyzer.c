@@ -5,9 +5,10 @@
 
 #include "lex.yy.h"
 
-// TODO: 위치 print
+int char_count = 0;
+
 void lexical_error(char* msg) {
-    printf("lexical error: %s\n", msg);
+    printf("lexical error(%d): %s\n", char_count, msg);
 }
 
 void getTokenStatement(Token* token_statement, int* len, int* eof) {

@@ -4,30 +4,33 @@
 #include "token_type.h"
 %}
 
+%{
+extern int char_count;
+%}
 comment #.*
 blank   [ \t]+
 letter  [a-zA-Z]
 digit   [0-9]
 %%
 {comment}   ;
-{blank}     ;
-[+\-*/=] {return C_OPERATOR;}
+{blank}     {char_count+=yyleng;};
+[+\-*/=] {char_count+=yyleng; return C_OPERATOR;}
 
-[()] {return C_BRACKET;}
+[()] {char_count+=yyleng; return C_BRACKET;}
 
-, {return C_COMMA;}
-\n {return C_NEW_LINE;}
-sub {return C_BUILTIN_FUCTION;}
+, {char_count+=yyleng; return C_COMMA;}
+\n {char_count+=yyleng; return C_NEW_LINE;}
+sub {char_count+=yyleng; return C_BUILTIN_FUCTION;}
 
-{digit}+    {return C_INT;}
+{digit}+    {char_count+=yyleng; return C_INT;}
 
 {digit}+"."{digit}* |
-{digit}*"."{digit}+ {return C_REAL;}
+{digit}*"."{digit}+ {char_count+=yyleng; return C_REAL;}
 
-{letter}({letter}|{digit})* {return C_VARIABLE;}
+{letter}({letter}|{digit})* {char_count+=yyleng; return C_VARIABLE;}
 
-\"(\\([\nabfnrt\\'"]|ooo|xdd)|[^"\\\n])*\"  {return C_STR;}
+\"(\\([\nabfnrt\\'"]|ooo|xdd)|[^"\\\n])*\"  {char_count+=yyleng; return C_STR;}
 
-$ast|$symbol    {return C_PARSER_DIRECTIVE;}
-. {return C_FAIL;}
+$ast|$symbol    {char_count+=yyleng; return C_PARSER_DIRECTIVE;}
+. {char_count+=yyleng; return C_FAIL;}
 %%
