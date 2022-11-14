@@ -3,7 +3,7 @@
 
 #include "parser.h"
 
-void interpret(ParseNode*);
+int interpret(ParseNode*);
 ParseNode* execute(ParseNode*);
 
 ParseNode* solveVariable(Token*);

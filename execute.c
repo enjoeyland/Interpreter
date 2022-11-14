@@ -10,14 +10,20 @@
 
 void runtime_error(char* msg) {
     printf("runtime error: %s\n", msg);
-    exit(1);
 }
 
-void interpret(ParseNode* syntax_tree) {
-    ParseNode* result = execute(syntax_tree);
-    if (result->current) {
-        printf("%s\n", getTokenValue(result->current));
+int interpret(ParseNode* syntax_tree) {
+    Token* result = execute(syntax_tree)->current;
+    if (isTypeOf(result, VARIABLE)) {
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[result->value.intValue - 1].name);
+        runtime_error(str);
+        return -1;
+    } else if (isTypeOf(result, FAIL)) {
+        return -1;
     }
+    if (result) printf("%s\n", getTokenValue(result));
+    return 0;
 }
 
 ParseNode* execute(ParseNode* syntax_tree) {
@@ -29,6 +35,8 @@ ParseNode* execute(ParseNode* syntax_tree) {
 
     TokenType token_type;
     switch (token_type = syntax_tree->current->type) {
+        case FAIL:
+            return syntax_tree;
         case VARIABLE:
             return solveVariable(syntax_tree->current);
         case INT:
@@ -47,6 +55,10 @@ ParseNode* execute(ParseNode* syntax_tree) {
 }
 
 ParseNode* operate(TokenType token_type, ParseNode* first, ParseNode* second, ParseNode* third) {
+    if (isTypeOf(first->current, FAIL) || isTypeOf(second->current, FAIL) || isTypeOf(third->current, FAIL)) {
+        return &failParsing;
+    }
+
     ParseNode* result;
     switch (token_type) {
         case PLUS:
@@ -184,8 +196,26 @@ ParseNode* operatePlus(Token* operand1, Token* operand2) {
         result = addDoubleQuote(result);
         t->value.intValue = getStringIdex_insert(result);
         t->valueType = V_INT;
+    } else if (isTypeOf(operand1, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand1->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else if (isTypeOf(operand2, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand2->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else {
+        free(t);
+        char str[100];
+        sprintf(str, "%s + %s은 정의되지 않음", tokenTypeName[operand1->type], tokenTypeName[operand2->type]);
+        runtime_error(str);
+        return &failParsing;
     }
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = t;
     return pn;
 }
@@ -216,9 +246,26 @@ ParseNode* operateMinus(Token* operand1, Token* operand2) {
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue - operand2->value.doubleValue;
         t->valueType = V_REAL;
+    } else if (isTypeOf(operand1, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand1->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else if (isTypeOf(operand2, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand2->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else {
+        free(t);
+        char str[100];
+        sprintf(str, "%s - %s은 정의되지 않음", tokenTypeName[operand1->type], tokenTypeName[operand2->type]);
+        runtime_error(str);
+        return &failParsing;
     }
-
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = t;
     return pn;
 }
@@ -246,8 +293,26 @@ ParseNode* operateMultiply(Token* operand1, Token* operand2) {
         char* s = repeatStr(stringTable[operand1->value.intValue - 1], operand2->value.intValue);
         t->value.intValue = getStringIdex_insert(s);
         t->valueType = V_INT;
+    } else if (isTypeOf(operand1, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand1->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else if (isTypeOf(operand2, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand2->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else {
+        free(t);
+        char str[100];
+        sprintf(str, "%s * %s은 정의되지 않음", tokenTypeName[operand1->type], tokenTypeName[operand2->type]);
+        runtime_error(str);
+        return &failParsing;
     }
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = t;
     return pn;
 }
@@ -274,15 +339,36 @@ ParseNode* operateDivide(Token* operand1, Token* operand2) {
         t->type = INT;
         t->value.intValue = divideStr(stringTable[operand1->value.intValue - 1], stringTable[operand2->value.intValue - 1]);
         t->valueType = V_INT;
+    } else if (isTypeOf(operand1, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand1->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else if (isTypeOf(operand2, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand2->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else {
+        free(t);
+        char str[100];
+        sprintf(str, "%s / %s은 정의되지 않음", tokenTypeName[operand1->type], tokenTypeName[operand2->type]);
+        runtime_error(str);
+        return &failParsing;
     }
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = t;
     return pn;
 }
 
 ParseNode* operateAssign(Token* operand1, Token* operand2) {
-    if (!isTypeOf(operand1, VARIABLE)) {
-        syntax_error("assign");
+    if (isTypeOf(operand1, FAIL) || isTypeOf(operand2, FAIL)) {
+        return &failParsing;
+    } else if (!isTypeOf(operand1, VARIABLE)) {
+        syntax_error("assignmet의 왼쪽이 variable가 아님");
+        return &failParsing;
     }
 
     SymbolEntry* se = &symbolTable[operand1->value.intValue - 1];
@@ -292,21 +378,51 @@ ParseNode* operateAssign(Token* operand1, Token* operand2) {
         se->token = (Token){REAL, operand2->value.doubleValue, V_REAL};
     } else if (isTypeOf(operand2, STR)) {
         se->token = (Token){STR, operand2->value.intValue, V_INT};
+    } else if (isTypeOf(operand2, VARIABLE)) {
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand2->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
     }
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = operand2;
     return pn;
 }
 
-ParseNode* operateSub(Token* str, Token* n1, Token* n2) {
+ParseNode* operateSub(Token* operand1, Token* operand2, Token* operand3) {
     Token* t = malloc(sizeof(Token));
+    if (isTypeOf(operand1, STR) && isTypeOf(operand2, INT) && isTypeOf(operand3, INT)) {
+        t->type = STR;
+        char* s = addDoubleQuote(substring(removeDoubleQuote(stringTable[operand1->value.intValue - 1]), operand2->value.intValue, operand3->value.intValue));
+        t->value.intValue = getStringIdex_insert(s);
+        t->valueType = V_INT;
+    } else if (isTypeOf(operand1, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand1->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else if (isTypeOf(operand2, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand2->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else if (isTypeOf(operand3, VARIABLE)) {
+        free(t);
+        char str[100];
+        sprintf(str, "%s는 undefined variable", symbolTable[operand3->value.intValue - 1].name);
+        runtime_error(str);
+        return &failParsing;
+    } else {
+        free(t);
+        char str[100];
+        sprintf(str, "sub(%s, %s, %s)은 정의되지 않음", tokenTypeName[operand1->type], tokenTypeName[operand2->type], tokenTypeName[operand2->type]);
+        runtime_error(str);
+        return &failParsing;
+    }
 
-    t->type = STR;
-    char* s = addDoubleQuote(substring(removeDoubleQuote(stringTable[str->value.intValue - 1]), n1->value.intValue, n2->value.intValue));
-    t->value.intValue = getStringIdex_insert(s);
-    t->valueType = V_INT;
-
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = t;
     return pn;
 }
@@ -319,7 +435,7 @@ ParseNode* solveVariable(Token* variable) {
     } else {
         t = variable;
     }
-    ParseNode* pn = malloc(sizeof(ParseNode));
+    ParseNode* pn = calloc(1, sizeof(ParseNode));
     pn->current = t;
     return pn;
 }

@@ -32,9 +32,6 @@ void getTokenStatement(Token* token_statement, int* len, int* eof) {
 
 Token getNextToken() {
     int token = yylex();
-    if (token == 0) {
-        return failToken;
-    }
     switch (token) {
         case C_FAIL:
             lexical_error(yytext);

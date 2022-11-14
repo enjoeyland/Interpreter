@@ -1,4 +1,3 @@
-
 10 + 5
 10
 val = 10
@@ -15,6 +14,6 @@ hello3/"hello"
 sub(hello3, 5, 10)
 3 * hello # runtime error: number * string은 정의되지 않음
 abc + 10 # runtime error: abc는 undefined variable
-i + j = val
+i + j = val # syntax error : assignment의 왼쪽이 variable가 아님
 val << 10 # lexical error: <<
 $ast

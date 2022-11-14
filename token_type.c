@@ -19,5 +19,6 @@ int isNewlineToken(Token t) {
 }
 
 int isTypeOf(Token* token, TokenType token_type) {
+    if (!token) return 0;
     return token->type == token_type;
 }

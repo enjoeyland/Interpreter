@@ -16,6 +16,7 @@ struct _ParseNode {
     struct _ParseNode* second;
     struct _ParseNode* third;
 } typedef ParseNode;
+extern ParseNode failParsing;
 
 Token* getCurrentToken();
 
@@ -35,6 +36,6 @@ ParseNode* operator_mul_div();
 void print_syntax_tree(ParseNode*);
 ParseNode* copyTree(ParseNode*);
 void freeSyntaxTree(ParseNode*);
-Token* syntax_error(char*);
+void syntax_error(char*);
 
 #endif  // PARSER_H

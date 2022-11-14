@@ -9,12 +9,10 @@
 
 TokenParser tp;
 ParseNode* last_syntax_tree;
+ParseNode failParsing = {&failToken, 0, NULL, NULL, NULL};
 
-Token*
-syntax_error(char* msg) {
+void syntax_error(char* msg) {
     printf("syntax error: %s\n", msg);
-    exit(1);
-    return getCurrentToken();
 }
 
 int isLookahead(TokenType type) {
@@ -33,25 +31,21 @@ ParseNode* match(TokenType type) {
         if (type == COMMA || type == BRACKET_LEFT || type == BRACKET_RIGHT || type == NEW_LINE || type == ABSTRACT_SYNTAX_TREE || type == SYMBOL_TABLE) {
             return NULL;
         }
-        ParseNode* pn = malloc(sizeof(ParseNode));
+        ParseNode* pn = calloc(1, sizeof(ParseNode));
         pn->current = t;
         pn->child_num = 0;
         return pn;
     } else {
-        Token* t = getCurrentToken();
         char msg[100];
-        sprintf(msg, "match %s %s", tokenTypeName[t->type], getTokenValue(t));
+        sprintf(msg, "expected %s but %s are given", tokenTypeName[type], getTokenValue(getCurrentToken()));
         syntax_error(msg);
+        exit(1);
     }
 }
 
 ParseNode* getSyntaxTree(Token* token_statement, int len) {
     tp = (TokenParser){token_statement, len, 0};
     ParseNode* syntax_tree = statement();
-    if (syntax_tree) {
-        freeSyntaxTree(last_syntax_tree);
-        last_syntax_tree = copyTree(syntax_tree);
-    }
     return syntax_tree;
 }
 
@@ -167,7 +161,10 @@ ParseNode* factor() {
     } else if (isLookahead(VARIABLE)) {
         return match(VARIABLE);
     } else {
-        syntax_error("factor");
+        char msg[100];
+        sprintf(msg, "expected sub,-,+,int,real,str,variable but %s are given", getTokenValue(getCurrentToken()));
+        syntax_error(msg);
+        exit(1);
     }
 }
 ParseNode* unsigned_factor() {
@@ -182,7 +179,10 @@ ParseNode* unsigned_factor() {
     } else if (isLookahead(VARIABLE)) {
         return match(VARIABLE);
     } else {
-        syntax_error("unsigned factor");
+        char msg[100];
+        sprintf(msg, "expected ( or int or real or variable but %s are given", getTokenValue(getCurrentToken()));
+        syntax_error(msg);
+        exit(1);
     }
 }
 
@@ -192,7 +192,10 @@ ParseNode* num() {
     } else if (isLookahead(REAL)) {
         return match(REAL);
     } else {
-        syntax_error("num");
+        char msg[100];
+        sprintf(msg, "expected int or real but %s are given", getTokenValue(getCurrentToken()));
+        syntax_error(msg);
+        exit(1);
     }
 }
 
@@ -230,6 +233,7 @@ ParseNode* operator_add_sub() {
         return match(MINUS);
     } else {
         syntax_error("oper + -");
+        exit(1);
     }
 }
 ParseNode* operator_mul_div() {
@@ -239,6 +243,7 @@ ParseNode* operator_mul_div() {
         return match(DIVIDE);
     } else {
         syntax_error("oper * /");
+        exit(1);
     }
 }
 
@@ -267,6 +272,5 @@ void freeSyntaxTree(ParseNode* syntax_tree) {
     freeSyntaxTree(syntax_tree->first);
     freeSyntaxTree(syntax_tree->second);
     freeSyntaxTree(syntax_tree->third);
-    free(syntax_tree->current);
     free(syntax_tree);
 }
