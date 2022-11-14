@@ -149,7 +149,7 @@ ParseNode* factor() {
         return sp;
     } else if (isLookahead(PLUS) || isLookahead(MINUS)) {
         ParseNode* oas = operator_add_sub();
-        ParseNode* uf = unsigned_factor();
+        ParseNode* uf = unary_factor();
         ////////////////////////
         oas->child_num = 1;
         oas->first = uf;
@@ -167,8 +167,15 @@ ParseNode* factor() {
         exit(1);
     }
 }
-ParseNode* unsigned_factor() {
-    if (isLookahead(BRACKET_LEFT)) {
+ParseNode* unary_factor() {
+    if (isLookahead(PLUS) || isLookahead(MINUS)) {
+        ParseNode* oas = operator_add_sub();
+        ParseNode* uf = unary_factor();
+        ////////////////////////
+        oas->child_num = 1;
+        oas->first = uf;
+        return oas;
+    } else if (isLookahead(BRACKET_LEFT)) {
         match(BRACKET_LEFT);
         ParseNode* e = expression();
         match(BRACKET_RIGHT);
@@ -180,7 +187,7 @@ ParseNode* unsigned_factor() {
         return match(VARIABLE);
     } else {
         char msg[100];
-        sprintf(msg, "expected ( or int or real or variable but %s are given", getTokenValue(getCurrentToken()));
+        sprintf(msg, "expected +,-,(,int,real,variable but %s are given", getTokenValue(getCurrentToken()));
         syntax_error(msg);
         exit(1);
     }

@@ -2,6 +2,5 @@ statement ::= expression ('=' sub_statement)* | '$ast' | '$symbol'
 sub_statement ::= expression ('=' sub_statement)*
 expression ::= term (('+'|'-') term )*
 term::= factor ( ('*'|'/') factor )*
-factor ::= '(' expression ')'| sub '(' expression ',' expression ',' expression ')' | ('+'|'-') unsigned_factor | string | num | variable  
-unsigned_factor ::= '(' expression ')' | num | variable
-num ::= int | real
+factor ::= '(' expression ')'| sub '(' expression ',' expression ',' expression ')' | ('+'|'-') unary_factor  | string | int | real | variable  
+unary_factor  ::= ('+'|'-') unary_factor | '(' expression ')' | int | real | variable

@@ -27,7 +27,7 @@ ParseNode* sub_statement();
 ParseNode* expression();
 ParseNode* term();
 ParseNode* factor();
-ParseNode* unsigned_factor();
+ParseNode* unary_factor();
 ParseNode* num();
 
 ParseNode* operator_add_sub();
