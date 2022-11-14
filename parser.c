@@ -198,11 +198,6 @@ ParseNode* num() {
         return match(INT);
     } else if (isLookahead(REAL)) {
         return match(REAL);
-    } else {
-        char msg[100];
-        sprintf(msg, "expected int or real but %s are given", getTokenValue(getCurrentToken()));
-        syntax_error(msg);
-        exit(1);
     }
 }
 
