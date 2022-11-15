@@ -325,6 +325,11 @@ ParseNode* operateMultiply(Token* operand1, Token* operand2) {
 ParseNode* operateDivide(Token* operand1, Token* operand2) {
     Token* t = malloc(sizeof(Token));
     if (isTypeOf(operand1, INT) && isTypeOf(operand2, INT)) {
+        if (operand2->value.intValue == 0) {
+            free(t);
+            runtime_error("0으로 나눌 수 없음");
+            return &failParsing;
+        }
         t->type = INT;
         t->value.intValue = operand1->value.intValue / operand2->value.intValue;
         t->valueType = V_INT;
@@ -333,6 +338,11 @@ ParseNode* operateDivide(Token* operand1, Token* operand2) {
         t->value.doubleValue = operand1->value.intValue / operand2->value.doubleValue;
         t->valueType = V_REAL;
     } else if (isTypeOf(operand1, REAL) && isTypeOf(operand2, INT)) {
+        if (operand2->value.intValue == 0) {
+            free(t);
+            runtime_error("0으로 나눌 수 없음");
+            return &failParsing;
+        }
         t->type = REAL;
         t->value.doubleValue = operand1->value.doubleValue / operand2->value.intValue;
         t->valueType = V_REAL;
@@ -341,6 +351,11 @@ ParseNode* operateDivide(Token* operand1, Token* operand2) {
         t->value.doubleValue = operand1->value.doubleValue / operand2->value.doubleValue;
         t->valueType = V_REAL;
     } else if (isTypeOf(operand1, STR) && isTypeOf(operand2, STR)) {
+        if (strcmp(stringTable[operand2->value.intValue - 1], "\"\"") == 0) {
+            free(t);
+            runtime_error("string을 empty string으로 나눌 수 없음");
+            return &failParsing;
+        }
         t->type = INT;
         t->value.intValue = divideStr(stringTable[operand1->value.intValue - 1], stringTable[operand2->value.intValue - 1]);
         t->valueType = V_INT;
@@ -397,6 +412,13 @@ ParseNode* operateAssign(Token* operand1, Token* operand2) {
 ParseNode* operateSub(Token* operand1, Token* operand2, Token* operand3) {
     Token* t = malloc(sizeof(Token));
     if (isTypeOf(operand1, STR) && isTypeOf(operand2, INT) && isTypeOf(operand3, INT)) {
+        if (operand2->value.intValue < 0 || operand3->value.intValue < 0) {
+            free(t);
+            char str[100];
+            sprintf(str, "sub(str,%s,%s)는 정의되지 않음", operand2->value.intValue < 0 ? "음수" : "양수", operand3->value.intValue < 0 ? "음수" : "양수");
+            runtime_error(str);
+            return &failParsing;
+        }
         t->type = STR;
         char* s = addDoubleQuote(substring(removeDoubleQuote(stringTable[operand1->value.intValue - 1]), operand2->value.intValue, operand3->value.intValue));
         t->value.intValue = getStringIdex_insert(s);
