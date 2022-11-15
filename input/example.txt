@@ -1,4 +1,6 @@
-"hello\
+hi = "hello\
 world"
-hi * 3
+a = 1
+a * 3
 +-3
+"hi"*0

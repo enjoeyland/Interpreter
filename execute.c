@@ -95,6 +95,7 @@ char* removeDoubleQuote(char* str) {
 
 char* addDoubleQuote(char* str) {
     char* result = malloc(strlen(str) + 3);
+    result[0] = '\0';
     strcat(result, "\"");
     strcat(result, str);
     strcat(result, "\"");
@@ -104,6 +105,7 @@ char* addDoubleQuote(char* str) {
 char* repeatStr(char* str, int num) {
     char* s = removeDoubleQuote(str);
     char* result = malloc(strlen(s) * num + 1);
+    result[0] = '\0';
     while (num-- > 0) {
         strcat(result, s);
     }
